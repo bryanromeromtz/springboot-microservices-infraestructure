@@ -21,11 +21,11 @@ import javax.transaction.Transactional;
 @Transactional
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
-    public OrderService(OrderRepository orderRepository, WebClient webClient) {
+    public OrderService(OrderRepository orderRepository, WebClient.Builder webClientBuilder) {
         this.orderRepository = orderRepository;
-        this.webClient = webClient;
+        this.webClientBuilder = webClientBuilder;
     }
 
     public List<OrderResponse> getAllOrders() {
@@ -73,8 +73,8 @@ public class OrderService {
                 .toList();
 
         // Call to Inventory Service and place order if the order is in  stock
-        InventoryResponse[] inventoryResponseList = webClient.get()
-                .uri("http://localhost:8082/api/inventory", uriBuilder ->
+        InventoryResponse[] inventoryResponseList = webClientBuilder.build().get()
+                .uri("http://inventory-service/api/inventory", uriBuilder ->
                         uriBuilder.queryParam("skuCode", skuCodes)
                                 .build()
                         )
