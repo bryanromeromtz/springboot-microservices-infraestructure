@@ -28,7 +28,7 @@ public class OrderController {
             return "Order Place Successfully";
         } catch (Exception e) {
             log.error("Error al realizar el pedido: {}", e.getMessage());
-            return "Error al realizar el pedido";
+            return "Product is not in stock, please try again later";
         }
     }
 

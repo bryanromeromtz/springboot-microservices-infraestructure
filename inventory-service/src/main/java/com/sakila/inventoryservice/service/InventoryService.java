@@ -1,10 +1,12 @@
 package com.sakila.inventoryservice.service;
 
+import com.sakila.inventoryservice.dto.InventoryResponse;
 import com.sakila.inventoryservice.model.Inventory;
 import com.sakila.inventoryservice.repository.InventoryRepository;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,9 +18,17 @@ public class InventoryService {
         this.inventoryRepository = inventoryRepository;
     }
 
-    public boolean isInStock(String skuCode) {
-        Optional<Inventory> inventory = inventoryRepository.findBySkuCode(skuCode);
-        return inventory.isPresent() && inventory.get().getQuantity() > 0;
+    public List<InventoryResponse> isInStock(List<String> skuCode) {
+        return inventoryRepository.findBySkuCodeIn(skuCode)
+                .stream()
+                .map(inventory ->
+                    InventoryResponse.builder()
+                            .skuCode(inventory.getSkuCode())
+                            .isInStock(inventory.getQuantity() > 0)
+                            .build()
+                )
+                .toList();
     }
+
 
 }
